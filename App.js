@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import React,{useState} from 'react';
 import { Text,StyleSheet,View,FlatList} from 'react-native';
+import Cita from './components/Cita';
 
 
 const App = () => {
@@ -9,25 +10,24 @@ const App = () => {
     {id:"2", paciente:"redux",propietario:"itzel",sintomas:"no duerme"},
     {id:"3", paciente:"native",propietario:"jose",sintomas:"no ladra"},
   ]);
-  console.log('desde consola');
+  
+  const handleDelete=id=>{
+    setCitas((citasActuales)=>{
+      return citasActuales.filter(cita=>cita.id!==id);
+    })
+  }
+
   return (
     <>
     <View style={styles.contenedor}>
       <Text style={styles.titulo}>Administrador de citas</Text>
+      <Text style={styles.titulo}>{citas.length>0?'Administra tus citas':'No hay citas, agrega una'}</Text>
       <FlatList
         data={citas}
-        renderItem={({item})=>(
-          <View>
-            <Text>{item.paciente}</Text>
-          </View>
-        )}
+        renderItem={({item})=>(<Cita cita={item} handleDelete={handleDelete}/>)
+      }
         keyExtractor={cita=>cita.id}
       />
-      {/* {citas.map(cita=>(
-        <View key={cita.id}>
-          <Text>{cita.paciente}</Text>
-        </View>
-      ))} */}
     </View>
 
     </>
@@ -40,6 +40,7 @@ const styles=StyleSheet.create({
     textAlign:'center',
     marginTop:40,
     fontWeight:'bold',
+    marginBottom: 20,
     color:"#FFF"
   },
   contenedor:{
