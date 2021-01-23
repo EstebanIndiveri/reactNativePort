@@ -3,7 +3,7 @@ import { Text,StyleSheet,View,TextInput,Button, TouchableHighlight,Alert,ScrollV
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import shortid from 'shortid';
 
-const Formulario = ({citas,setCitas,setMostrarForm}) => {
+const Formulario = ({citas,setCitas,setMostrarForm,guardarCitasStorage}) => {
     const [paciente, setPaciente] = useState('');
     const [propietario, setPropietario] = useState('');
     const [telefono, setTelefono] = useState('');
@@ -39,7 +39,7 @@ const Formulario = ({citas,setCitas,setMostrarForm}) => {
         let horax=(hour.toLocaleDateString('en-US',opciones));
         let formatHora=horax.split(',');
         setHora(formatHora[1]);
-        console.log(hora);
+        // console.log(hora);
         // console.warn("A date has been picked: ", date);
         hideTimePicker();
       };
@@ -52,15 +52,13 @@ const Formulario = ({citas,setCitas,setMostrarForm}) => {
         }
         const cita={paciente,propietario,telefono,fecha,hora,sintomas};
         cita.id=shortid.generate();
-        console.log(cita);
+        // console.log(cita);
         const citasNuevo=[...citas,cita];
         setCitas(citasNuevo);
-        // 
+        // storage
+        guardarCitasStorage(JSON.stringify(citasNuevo));
         setMostrarForm(false);
-        // 
-      }
-
-      
+      };
 
     //   alerta
     const mostrarAlerta=()=>{

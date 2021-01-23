@@ -1,21 +1,47 @@
 /* eslint-disable prettier/prettier */
-import React,{Fragment, useState} from 'react';
+import React,{Fragment, useState,useEffect} from 'react';
 import { Text,StyleSheet,View,FlatList,TouchableHighlight,Platform, StatusBar} from 'react-native';
 import Cita from './components/Cita';
 import Formulario from './components/Formulario';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const App = () => {
   const [mostrarForm, setMostrarForm] = useState(false);
   const [citas, setCitas] = useState([]);
   
+  useEffect(()=>{
+    const obtenerCitasStorage=async()=>{
+      try {
+        const citasStorage=await AsyncStorage.getItem('citas');
+        console.log(citasStorage);
+        if(citasStorage){
+          setCitas(JSON.parse(citasStorage));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    obtenerCitasStorage();
+  },[])
+
   const handleDelete=id=>{
-    setCitas((citasActuales)=>{
-      return citasActuales.filter(cita=>cita.id!==id);
-    })
+
+    const citasFiltradas=citas.filter(cita=>cita.id!==id);
+
+    setCitas(citasFiltradas);
+    guardarCitasStorage(JSON.stringify(citasFiltradas));
   };
   const mostrarFormulario=()=>{
     setMostrarForm(!mostrarForm);
-  }
+  };
+
+  const guardarCitasStorage=async(citasJSON)=>{
+    try {
+      await AsyncStorage.setItem('citas',citasJSON);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -32,7 +58,7 @@ const App = () => {
        {mostrarForm?(
          <Fragment>
         <Text style={styles.titulo}>Crear Nueva Cita</Text>
-         <Formulario citas={citas} setCitas={setCitas} setMostrarForm={setMostrarForm}/>
+         <Formulario citas={citas} setCitas={setCitas} setMostrarForm={setMostrarForm} guardarCitasStorage={guardarCitasStorage}/>
          </Fragment>
        )
        :(
